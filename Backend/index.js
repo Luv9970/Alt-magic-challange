@@ -8,22 +8,6 @@ import { authorize , redirect } from './ShopifyOAuthHelper.js';
 import bodyParser from 'body-parser';
 
 
-
-
-
-// app.get('/api/shopify/authorize', async(req , res) =>{
-//     console.log(req.query.shop);
-//     return res.redirect(await authorize(req.query.shop));
-// })
-
-// app.get('/api/shopify/redirect', async(req, res) => {
-//     return res.json(await redirect(req.query.code));
-// })
-
-
-
-
-
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -37,28 +21,23 @@ app.get('/', (req, res) => {
 
 app.get('/api/shopify/authorize', (req, res) => {
   const shop  = req.query.shop;
-
-  // console.log('Shopify shop:', shop);
-
   if (!shop) return res.status(400).send('Missing shop parameter');
   const installUrl = authorize(shop);
-
-  // console.log("Outside the install Url");
-
   res.redirect(installUrl);
 });
 
-
-
 app.get('/api/shopify/redirect', async (req, res) => {
-
-  // console.log("Inside the redirect function");
-
   const { shop, code } = req.query;
   if (!shop || !code) return res.status(400).send('Missing shop or code');
 
-    return res.json(await redirect(req.query.code,req.query.shop));
-
+try {
+  console.log("Inside the last try-catch block")
+    const result = await redirect({ code:req.query.code , shop:req.query.shop });
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    console.error("Redirect failed:", error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
 });
  
 
