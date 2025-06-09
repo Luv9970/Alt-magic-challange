@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const redirect = async (code,shop) => {
+
   let shopifyOAuthUri = `https://${shop}.myshopify.com/admin/oauth/access_token?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&code=${code}`;
 
   const data = await axios({
@@ -12,10 +13,12 @@ const redirect = async (code,shop) => {
   }).catch(error=>{
     return error;
   });
+  
   return{
     shop: shop,
-    code: code
+    code: code, 
   } 
+
 }
 
 const authorize = (shop) => {

@@ -31,8 +31,7 @@ app.get('/api/shopify/redirect', async (req, res) => {
   if (!shop || !code) return res.status(400).send('Missing shop or code');
 
 try {
-  console.log("Inside the last try-catch block")
-    const result = await redirect({ code:req.query.code , shop:req.query.shop });
+    const result = await redirect({ code:req.query.code , shop:req.query.shop , hmac: req.query.hmac ,timestamp: req.query.timestamp , installedAt: new Date().toLocaleString()});
     return res.status(200).json({ success: true, data: result });
   } catch (error) {
     console.error("Redirect failed:", error);
